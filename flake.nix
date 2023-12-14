@@ -14,7 +14,17 @@
       pkgs = nixpkgs.legacyPackages.${system};
     in {
       default = pkgs.mkShell {
-        packages = [ microvm.packages.${system}.microvm ];
+        packages = [
+          microvm.packages.${system}.microvm
+
+          pkgs.go
+          pkgs.gopls
+          pkgs.delve
+
+          pkgs.protobuf
+          pkgs.protoc-gen-go
+          pkgs.protoc-gen-go-grpc
+        ];
       };
     });
   };
