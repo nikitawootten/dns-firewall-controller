@@ -83,8 +83,24 @@ pkgs.buildGoModule {
     installManPage man/*
   '';
 
-  # Check that the plugin registers in the output binary
+  # Additional checks to ensure that the plugin was properly added to the binary
   postCheck = ''
+    # Sanity check: was the plugin included at all?
     $GOPATH/bin/coredns -plugins | grep dns.${plugin-name} || { echo "Plugin not registered in output binary"; exit 1;}
+
+    pushd vendor/${repo}
+
+    # Sanity check all vendored plugin files against the source derivation
+    # Currently we must update the vendor hash every time a go file changes
+    find . -type f -name '*.go' -print0 | while IFS= read -r -d $'\0' file; do
+      vendorSum=$(sha256sum "$file" | cut -d' ' -f1)
+      srcSum=$(sha256sum "${plugin-src}/$file" | cut -d' ' -f1)
+      if [ "$vendorSum" != "$srcSum" ]; then
+        echo "File $file does not match source derivation"
+        exit 1
+      fi
+    done
+
+    popd
   '';
 }
