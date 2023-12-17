@@ -10,6 +10,11 @@
   outputs = { self, nixpkgs, microvm }: let
     forEachSystem = f: nixpkgs.lib.genAttrs ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"] f;
   in {
+    packages = forEachSystem (system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+      in {
+        coredns = import ./buildCoreDnsWithPlugin.nix { inherit pkgs; };
+      });
     devShells = forEachSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
     in {

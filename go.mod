@@ -1,4 +1,4 @@
-module github.com/nikitawootten/dns-firewall-controller/src
+module github.com/nikitawootten/dns-firewall-controller
 
 go 1.21.5
 
