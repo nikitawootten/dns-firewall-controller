@@ -29,7 +29,7 @@ pkgs.buildGoModule {
   
   nativeBuildInputs = [ pkgs.installShellFiles ];
 
-  vendorHash = "sha256-N11Zdq47utfnThfa22EksJbYWOS9wFB/tmDM8Psq83w=";
+  vendorHash = "sha256-OLFgY5O4RO6iizUbRino6eaY9vPakEA8doDI4jiegsY=";
   # vendorHash = pkgs.lib.fakeHash;
 
   # VERY hacky way to add a plugin to the coredns build

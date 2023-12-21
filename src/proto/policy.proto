@@ -1,10 +1,10 @@
 syntax = "proto3";
-package common;
+package proto;
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
-option go_package = "github.com/nikitawootten/dns-firewall-controller/src/common";
+option go_package = "github.com/nikitawootten/dns-firewall-controller/src/proto";
 
 message IpAddress {
     oneof ip_address {

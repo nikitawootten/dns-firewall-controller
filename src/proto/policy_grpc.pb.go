@@ -4,7 +4,7 @@
 // - protoc             v4.24.4
 // source: policy.proto
 
-package common
+package proto
 
 import (
 	context "context"
@@ -20,12 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	FirewallController_WriteClientPolicy_FullMethodName          = "/common.FirewallController/WriteClientPolicy"
-	FirewallController_RecordActivePolicies_FullMethodName       = "/common.FirewallController/RecordActivePolicies"
-	FirewallController_RecordActiveClientPolicies_FullMethodName = "/common.FirewallController/RecordActiveClientPolicies"
-	FirewallController_WriteStreamClientPolicies_FullMethodName  = "/common.FirewallController/WriteStreamClientPolicies"
-	FirewallController_RecordStreamPolicies_FullMethodName       = "/common.FirewallController/RecordStreamPolicies"
-	FirewallController_RecordStreamClientPolicies_FullMethodName = "/common.FirewallController/RecordStreamClientPolicies"
+	FirewallController_WriteClientPolicy_FullMethodName          = "/proto.FirewallController/WriteClientPolicy"
+	FirewallController_RecordActivePolicies_FullMethodName       = "/proto.FirewallController/RecordActivePolicies"
+	FirewallController_RecordActiveClientPolicies_FullMethodName = "/proto.FirewallController/RecordActiveClientPolicies"
+	FirewallController_WriteStreamClientPolicies_FullMethodName  = "/proto.FirewallController/WriteStreamClientPolicies"
+	FirewallController_RecordStreamPolicies_FullMethodName       = "/proto.FirewallController/RecordStreamPolicies"
+	FirewallController_RecordStreamClientPolicies_FullMethodName = "/proto.FirewallController/RecordStreamClientPolicies"
 )
 
 // FirewallControllerClient is the client API for FirewallController service.
@@ -349,7 +349,7 @@ func (x *firewallControllerRecordStreamClientPoliciesServer) Send(m *ClientPolic
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var FirewallController_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "common.FirewallController",
+	ServiceName: "proto.FirewallController",
 	HandlerType: (*FirewallControllerServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
