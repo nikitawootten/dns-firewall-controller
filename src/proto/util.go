@@ -6,6 +6,8 @@ import (
 	"net"
 )
 
+//go:generate protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative policy.proto
+
 func ToProtoIpAddress(ip net.IP) (*IpAddress, error) {
 	if ip4 := ip.To4(); ip4 != nil {
 		data := binary.BigEndian.Uint32(ip4)

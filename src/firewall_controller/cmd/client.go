@@ -10,7 +10,6 @@ import (
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 var clientCmd = &cobra.Command{
@@ -53,12 +52,7 @@ var clientWriteClientPolicyCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-
 		client := net.ParseIP(client_raw)
-		proto_client, err := pb.ToProtoIpAddress(client)
-		if err != nil {
-			log.Fatal(err)
-		}
 
 		// Parse allowed IPs
 
@@ -70,11 +64,6 @@ var clientWriteClientPolicyCmd = &cobra.Command{
 		allowed := make([]net.IP, len(allowed_raw))
 		for i, ip_raw := range allowed_raw {
 			allowed[i] = net.ParseIP(ip_raw)
-		}
-
-		proto_allowed, err := pb.ToProtoIpAddresses(allowed)
-		if err != nil {
-			log.Fatal(err)
 		}
 
 		// Parse duration
@@ -89,13 +78,14 @@ var clientWriteClientPolicyCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		allow_until := time.Now().Add(for_duration)
+		policy, err := pb.NewClientPolicy(client, allowed, time.Now().Add(for_duration))
+		if err != nil {
+			log.Fatalf("failed to create client policy: %v", err)
+		}
 
-		grpc_client.WriteClientPolicy(context.Background(), &pb.ClientPolicy{
-			Client:     proto_client,
-			AllowedIps: proto_allowed,
-			AllowUntil: timestamppb.New(allow_until),
-		})
+		if _, err := grpc_client.WriteClientPolicy(context.Background(), policy); err != nil {
+			log.Fatalf("failed to write client policy: %v", err)
+		}
 	},
 }
 

@@ -4,7 +4,8 @@ import (
 	"log"
 	"net"
 
-	firewall_controller "github.com/nikitawootten/dns-firewall-controller/src/firewall_controller/server"
+	firewall_controller "github.com/nikitawootten/dns-firewall-controller/src/firewall_controller/controller"
+	"github.com/nikitawootten/dns-firewall-controller/src/firewall_controller/firewall"
 	pb "github.com/nikitawootten/dns-firewall-controller/src/proto"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
@@ -27,7 +28,7 @@ var serverCmd = &cobra.Command{
 
 		var opts []grpc.ServerOption
 		grpcServer := grpc.NewServer(opts...)
-		firewallController := firewall_controller.NewFirewallControllerServer()
+		firewallController := firewall_controller.NewFirewallControllerServer(firewall.NewNaiveFirewall())
 		pb.RegisterFirewallControllerServer(grpcServer, firewallController)
 		if err = grpcServer.Serve(lis); err != nil {
 			log.Fatalf("failed to start server: %v", err)

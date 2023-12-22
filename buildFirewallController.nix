@@ -10,6 +10,6 @@ pkgs.buildGoModule {
       ./go.sum
     ];
   };
-  vendorHash = "sha256-//16qzE7sdBmtIPYhfRIMHhnVZtr1Ce8ZhIazBRrCw8=";
+  vendorHash = "sha256-sF8RFUEIy3mip/EyJDn0+mRfFbeBbn18rqsWtfsAOqo=";
   # vendorHash = pkgs.lib.fakeHash;
 }
