@@ -29,7 +29,7 @@ pkgs.buildGoModule {
   
   nativeBuildInputs = [ pkgs.installShellFiles ];
 
-  vendorHash = "sha256-OLFgY5O4RO6iizUbRino6eaY9vPakEA8doDI4jiegsY=";
+  vendorHash = "sha256-Dfp1LTLtP0i3nbeWeEV2MFSbwc584ASBj+enFWmVCEk=";
   # vendorHash = pkgs.lib.fakeHash;
 
   # VERY hacky way to add a plugin to the coredns build
@@ -37,7 +37,8 @@ pkgs.buildGoModule {
     # Add our plugin to the go.mod file using the replace directive
     go mod edit -replace '${repo}=${plugin-src}'
     go get ${plugin}
-    echo "${plugin-name}:${plugin}" >> plugin.cfg
+    # In CoreDNS, plugin order matters. Add our plugin near the top, before the bind plugin.
+    sed -i '30i ${plugin-name}:${plugin}' plugin.cfg
 
     GOOS= GOARCH= go generate
     go mod vendor
