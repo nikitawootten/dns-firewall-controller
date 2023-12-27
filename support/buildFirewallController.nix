@@ -8,4 +8,8 @@ pkgs.buildGoModule {
   src = common.src;
   vendorHash = "sha256-sF8RFUEIy3mip/EyJDn0+mRfFbeBbn18rqsWtfsAOqo=";
   # vendorHash = pkgs.lib.fakeHash;
+
+  postInstall = ''
+    mv $out/bin/firewall_controller $out/bin/firewall-controller
+  '';
 }
