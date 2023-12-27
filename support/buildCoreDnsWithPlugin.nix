@@ -1,29 +1,18 @@
 { pkgs, ... }:
 let
-  pname = "coredns";
-  version = "1.11.1";
-  repo = "github.com/nikitawootten/dns-firewall-controller";
-  plugin = "${repo}/src/coredns_plugin";
+  common = import ./buildCommon.nix { inherit pkgs; };
+  plugin-path = "${common.repo}/src/coredns_plugin";
   plugin-name = "squawker";
-  coredns-src = pkgs.fetchFromGitHub {
-    owner = "coredns";
-    repo = "coredns";
-    rev = "v${version}";
-    sha256 = "sha256-XZoRN907PXNKV2iMn51H/lt8yPxhPupNfJ49Pymdm9Y=";
-  };
-  plugin-src = pkgs.lib.fileset.toSource {
-    root=./.;
-    fileset = pkgs.lib.fileset.unions [
-      ./src
-      ./go.mod
-      ./go.sum
-    ];
-  };
 in
 pkgs.buildGoModule {
-  inherit pname version;
-
-  src = coredns-src;
+  pname = "coredns";
+  version = common.coredns-version;
+  src = pkgs.fetchFromGitHub {
+    owner = "coredns";
+    repo = "coredns";
+    rev = "v${common.coredns-version}";
+    sha256 = "sha256-XZoRN907PXNKV2iMn51H/lt8yPxhPupNfJ49Pymdm9Y=";
+  };
 
   outputs = [ "out" "man" ];
   
@@ -35,10 +24,10 @@ pkgs.buildGoModule {
   # VERY hacky way to add a plugin to the coredns build
   modBuildPhase = ''
     # Add our plugin to the go.mod file using the replace directive
-    go mod edit -replace '${repo}=${plugin-src}'
-    go get ${plugin}
+    go mod edit -replace '${common.repo}=${common.src}'
+    go get ${plugin-path}
     # In CoreDNS, plugin order matters. Add our plugin near the top, before the bind plugin.
-    sed -i '30i ${plugin-name}:${plugin}' plugin.cfg
+    sed -i '30i ${plugin-name}:${plugin-path}' plugin.cfg
 
     GOOS= GOARCH= go generate
     go mod vendor
@@ -46,7 +35,7 @@ pkgs.buildGoModule {
     # This is a problem because go.mod and modules.txt still reference the Nix store, and Nix gets very upset at random references to the Nix store
     
     # After vendoring we need to surgically remove all unused references to the Nix store
-    go mod edit -dropreplace '${repo}'
+    go mod edit -dropreplace '${common.repo}'
     sed -i 's/ => \/nix\/store.*//g' vendor/modules.txt
   '';
 
@@ -89,13 +78,13 @@ pkgs.buildGoModule {
     # Sanity check: was the plugin included at all?
     $GOPATH/bin/coredns -plugins | grep dns.${plugin-name} || { echo "Plugin not registered in output binary"; exit 1;}
 
-    pushd vendor/${repo}
+    pushd vendor/${common.repo}
 
     # Sanity check all vendored plugin files against the source derivation
     # Currently we must update the vendor hash every time a go file changes
     find . -type f -name '*.go' -print0 | while IFS= read -r -d $'\0' file; do
       vendorSum=$(sha256sum "$file" | cut -d' ' -f1)
-      srcSum=$(sha256sum "${plugin-src}/$file" | cut -d' ' -f1)
+      srcSum=$(sha256sum "${common.src}/$file" | cut -d' ' -f1)
       if [ "$vendorSum" != "$srcSum" ]; then
         echo "File $file does not match source derivation"
         exit 1
