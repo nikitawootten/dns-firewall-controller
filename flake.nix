@@ -15,6 +15,7 @@
       in {
         coredns = import ./support/buildCoreDnsWithPlugin.nix { inherit pkgs; };
         firewall-controller = import ./support/buildFirewallController.nix { inherit pkgs; };
+        vm-integration = import ./support/vmIntegration.nix { inherit pkgs; };
       });
     devShells = forEachSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
