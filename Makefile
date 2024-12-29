@@ -5,19 +5,16 @@ test: test-unit
 test-unit:
 	go test ./...
 
-.PHONY: codegen
-codegen:
-	go generate ./...
-
 COREDNS_PORT := 5300
+COREDNS_COREFILE := support/TestCorefile
 
 .PHONY: run-coredns
 run-coredns:
-	nix run .#coredns -- -conf support/TestCorefile -p $(COREDNS_PORT)
+	nix run nixpkgs#coredns -- -conf $(COREDNS_COREFILE) -p $(COREDNS_PORT)
 
-.PHONY: run-firewall-controller
-run-firewall-controller:
-	nix run .#firewall-controller -- server --address :8080
+.PHONY: run-dns-firewall-controller
+run-dns-firewall-controller:
+	nix run .#dns-firewall-controller
 
 .PHONY: send-dns-request
 send-dns-request:

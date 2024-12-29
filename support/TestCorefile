@@ -3,6 +3,6 @@
 	errors
 	debug
 	log
-	squawker 127.0.0.1:8080
+	dnstap tcp://127.0.0.1:6000 full
 	forward . 8.8.8.8
 }
